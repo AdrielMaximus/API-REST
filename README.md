@@ -1,11 +1,34 @@
-# Bem Vindo
+# REST API
 
-## Agradecimentos
+This is a simple REST API built with Node.js and Express.
 
-Gostaria de te agradecer por chegar até aqui. Espero que você possa adquirir um bom conhecimento e compartilhar com outros.
+## Getting Started
 
-Este trabalho é o resultado de uma série de vídeo aulas **gratuitas** que tenho disponibilizadas no meu canal do youtube.
+### Prerequisites
 
-Já que está aqui, aproveite e se inscreva, e apoie este trabalho que eu faço com tanto zelo.
+- Node.js
+- npm (Node Package Manager)
 
-[CLIQUE AQUI PARA VISITAR A PLAYLIST](https://www.youtube.com/watch?v=hAAj27hgPFg&list=PLWgD0gfm500EMEDPyb3Orb28i7HK5_DkR&index=2&t=0s)
+### Installation
+
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/AdrielMaximus/API-REST.git
+    ```
+2. Navigate to the project directory:
+    ```sh
+    cd API-REST
+    ```
+3. Install the dependencies:
+    ```sh
+    npm install
+    ```
+
+### Running the Server
+
+To start the server, run the following command:
+```sh
+npm start
+```
+
+
