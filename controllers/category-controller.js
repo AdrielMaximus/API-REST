@@ -1,8 +1,8 @@
-const mysql = require('../mysql');
+import { execute } from '../mysql';
 
-exports.getCategories = async (req, res, next) => {
+export async function getCategories(req, res, next) {
     try {
-        const result = await mysql.execute("SELECT * FROM categories;")
+        const result = await execute("SELECT * FROM categories;")
         const response = {
             length: result.length,
             categories: result.map(category => {
@@ -16,12 +16,12 @@ exports.getCategories = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}
 
-exports.postCategory = async (req, res, next) => {
+export async function postCategory(req, res, next) {
     try {
         const query = 'INSERT INTO categories (name) VALUES (?)';
-        const result = await mysql.execute(query, [req.body.name]);
+        const result = await execute(query, [req.body.name]);
 
         const response = {
             message: 'Categoria inserida com sucesso',
@@ -39,4 +39,4 @@ exports.postCategory = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}

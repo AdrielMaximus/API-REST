@@ -1,10 +1,10 @@
-const jwt = require('jsonwebtoken');
+import { verify } from 'jsonwebtoken';
 
-exports.required = (req, res, next) => {
+export function required(req, res, next) {
 
     try {
         const token = req.headers.authorization.split(' ')[1];
-        const decode = jwt.verify(token, process.env.JWT_KEY);
+        const decode = verify(token, process.env.JWT_KEY);
         req.user = decode;
         next();
     } catch (error) {
@@ -13,11 +13,11 @@ exports.required = (req, res, next) => {
 
 }
 
-exports.optional = (req, res, next) => {
+export function optional(req, res, next) {
 
     try {
         const token = req.headers.authorization.split(' ')[1];
-        const decode = jwt.verify(token, process.env.JWT_KEY);
+        const decode = verify(token, process.env.JWT_KEY);
         req.user = decode;
         next();
     } catch (error) {

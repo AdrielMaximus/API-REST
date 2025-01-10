@@ -1,6 +1,6 @@
-const mysql = require('../mysql');
+import { execute } from '../mysql';
 
-exports.getProducts = async (req, res, next) => {
+export async function getProducts(req, res, next) {
     try {
         let name = '';
         if (req.query.name) {
@@ -15,7 +15,7 @@ exports.getProducts = async (req, res, next) => {
                     name LIKE '%${name}%'
                 );
         `;
-        const result = await mysql.execute(query, [
+        const result = await execute(query, [
             req.query.categoryId
         ])
         const response = {
@@ -38,12 +38,12 @@ exports.getProducts = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}
 
-exports.postProduct = async (req, res, next) => {
+export async function postProduct(req, res, next) {
     try {
         const query = 'INSERT INTO products (name, price, productImage, categoryId) VALUES (?,?,?,?)';
-        const result = await mysql.execute(query, [
+        const result = await execute(query, [
             req.body.name,
             req.body.price,
             req.file.path,
@@ -69,12 +69,12 @@ exports.postProduct = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}
 
-exports.getProductDetail = async (req, res, next)=> {
+export async function getProductDetail(req, res, next) {
     try {
         const query = 'SELECT * FROM products WHERE productId = ?;';
-        const result = await mysql.execute(query, [req.params.productId]);
+        const result = await execute(query, [req.params.productId]);
 
         if (result.length == 0) {
             return res.status(404).send({
@@ -98,16 +98,16 @@ exports.getProductDetail = async (req, res, next)=> {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}
 
-exports.updateProduct = async (req, res, next) => {
+export async function updateProduct(req, res, next) {
 
     try {
         const query = ` UPDATE products
                            SET name         = ?,
                                price        = ?
                          WHERE productId    = ?`;
-        await mysql.execute(query, [
+        await execute(query, [
             req.body.name,
             req.body.price,
             req.params.productId
@@ -129,12 +129,12 @@ exports.updateProduct = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}
 
-exports.deleteProduct = async (req, res, next) => {
+export async function deleteProduct(req, res, next) {
     try {
         const query = `DELETE FROM products WHERE productId = ?`;
-        await mysql.execute(query, [req.params.productId]);
+        await execute(query, [req.params.productId]);
 
         const response = {
             message: 'Produto removido com sucesso',
@@ -153,12 +153,12 @@ exports.deleteProduct = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}
 
-exports.postImage = async (req, res, next) => {
+export async function postImage(req, res, next) {
     try {
         const query = 'INSERT INTO productImages (productId, path) VALUES (?,?)';
-        const result = await mysql.execute(query, [
+        const result = await execute(query, [
             req.params.productId,
             req.file.path
         ]);
@@ -180,12 +180,12 @@ exports.postImage = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}
 
-exports.getImages = async (req, res, next) => {
+export async function getImages(req, res, next) {
     try {
         const query  = "SELECT * FROM productImages WHERE productId = ?;"
-        const result = await mysql.execute(query, [req.params.productId])
+        const result = await execute(query, [req.params.productId])
         const response = {
             length: result.length,
             images: result.map(img => {
@@ -200,4 +200,4 @@ exports.getImages = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}

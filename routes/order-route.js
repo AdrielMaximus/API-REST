@@ -1,15 +1,15 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+const router = Router();
 
-const orderController = require('../controllers/order-controller');
+import { getOrders, postOrder, getOrderDetail, deleteOrder, oAuthGerencianet, createPixBilling, getQrCode } from '../controllers/order-controller';
 
-router.get('/',                         orderController.getOrders);
-router.post('/',                        orderController.postOrder);
-router.get('/:orderId',                 orderController.getOrderDetail);
-router.delete('/:orderId',              orderController.deleteOrder);
+router.get('/',                         getOrders);
+router.post('/',                        postOrder);
+router.get('/:orderId',                 getOrderDetail);
+router.delete('/:orderId',              deleteOrder);
 
-router.post('/:orderId/pix/billing',    orderController.oAuthGerencianet,
-                                        orderController.createPixBilling,
-                                        orderController.getQrCode)
+router.post('/:orderId/pix/billing',    oAuthGerencianet,
+                                        createPixBilling,
+                                        getQrCode)
 
-module.exports = router;
+export default router;

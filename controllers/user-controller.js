@@ -1,8 +1,8 @@
-const mysql = require('../mysql');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+import { execute } from '../mysql';
+import { hashSync, compareSync } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
 
-exports.createUser = async (req, res, next) => {
+export async function createUser(req, res, next) {
 
     try {
         // var query = `SELECT * FROM users WHERE email = ?`;
@@ -16,11 +16,11 @@ exports.createUser = async (req, res, next) => {
 
         const users = req.body.users.map(user => [
             user.email,
-            bcrypt.hashSync(user.password, 10)
+            hashSync(user.password, 10)
         ])
 
         query = 'INSERT INTO users (email, password) VALUES ?';
-        const results = await mysql.execute(query, [ users ]);
+        const results = await execute(query, [ users ]);
 
         const response = {
             message: 'Usuário criado com sucesso',
@@ -31,20 +31,20 @@ exports.createUser = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}
 
-exports.Login = async (req, res, next) => {
+export async function Login(req, res, next) {
 
     try {
         const query = `SELECT * FROM users WHERE email = ?`;
-        var results = await mysql.execute(query, [req.body.email]);
+        var results = await execute(query, [req.body.email]);
 
         if (results.length < 1) {
             return res.status(401).send({ message: 'Falha na autenticação' })
         }
 
-        if (await bcrypt.compareSync(req.body.password, results[0].password)) {
-            const token = jwt.sign({
+        if (await compareSync(req.body.password, results[0].password)) {
+            const token = sign({
                 userId: results[0].userId,
                 email: results[0].email
             },
@@ -62,4 +62,4 @@ exports.Login = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ message: 'Falha na autenticação' });
     }
-};
+}

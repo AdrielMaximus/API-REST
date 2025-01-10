@@ -1,9 +1,9 @@
-const mysql = require('../mysql');
+import { execute } from '../mysql';
 
-exports.deleteImage = async (req, res, next) => {
+export async function deleteImage(req, res, next) {
     try {
         const query = `DELETE FROM productImages WHERE imageId = ?`;
-        await mysql.execute(query, [req.params.imageId]);
+        await execute(query, [req.params.imageId]);
 
         const response = {
             message: 'Imagem removida com sucesso',
@@ -23,4 +23,4 @@ exports.deleteImage = async (req, res, next) => {
         console.error(error)
         return res.status(500).send({ error: error });
     }
-};
+}

@@ -1,9 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const login = require('../middleware/login');
+import { Router } from 'express';
+const router = Router();
+import { required } from '../middleware/login';
 
-const imageController = require('../controllers/image-controller');
+import { deleteImage } from '../controllers/image-controller';
 
-router.delete('/:imageId', login.required, imageController.deleteImage);
+router.delete('/:imageId', required, deleteImage);
 
-module.exports = router;
+export default router;

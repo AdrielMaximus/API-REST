@@ -1,10 +1,10 @@
-const mysql = require('../mysql');
-const fs = require('fs');
-const https = require('https');
-const axios = require('axios');
-const randexp = require('randexp');
+import { execute } from '../mysql';
+import { readFileSync, writeFileSync } from 'fs';
+import { Agent } from 'https';
+import axios from 'axios';
+import randexp from 'randexp';
 
-exports.getOrders = async (req, res, next) => {
+export async function getOrders(req, res, next) {
     try {
         const query = `SELECT orders.orderId,
                               orders.quantity,
@@ -14,7 +14,7 @@ exports.getOrders = async (req, res, next) => {
                          FROM orders
                    INNER JOIN products
                            ON products.productId = orders.productId;`
-        const result = await mysql.execute(query);
+        const result = await execute(query);
         const response = {
             orders: result.map(order => {
                 return {
@@ -38,21 +38,21 @@ exports.getOrders = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}
 
-exports.postOrder = async (req, res, next) => {
+export async function postOrder(req, res, next) {
 
 
     try {
         const queryProduct = 'SELECT * FROM products WHERE productId = ?';
-        const resultProduct = await mysql.execute(queryProduct, [req.body.productId]);
+        const resultProduct = await execute(queryProduct, [req.body.productId]);
 
         if (resultProduct.length == 0) {
             return res.status(404).send({ message: 'Produto não encontrado'});
         }
 
         const queryOrder  = 'INSERT INTO orders (productId, quantity) VALUES (?,?)';
-        const resultOrder = await mysql.execute(queryOrder, [req.body.productId, req.body.quantity]);
+        const resultOrder = await execute(queryOrder, [req.body.productId, req.body.quantity]);
 
         const response = {
             message: 'Pedido inserido com sucesso',
@@ -72,12 +72,12 @@ exports.postOrder = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}
 
-exports.getOrderDetail = async (req, res, next)=> {
+export async function getOrderDetail(req, res, next) {
     try {
         const query = 'SELECT * FROM orders WHERE orderId = ?;';
-        const result = await mysql.execute(query, [req.params.orderId]);
+        const result = await execute(query, [req.params.orderId]);
 
         if (result.length == 0) {
             return res.status(404).send({
@@ -101,12 +101,12 @@ exports.getOrderDetail = async (req, res, next)=> {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}
 
-exports.deleteOrder = async (req, res, next) => {
+export async function deleteOrder(req, res, next) {
     try {
         const query = `DELETE FROM orders WHERE orderId = ?`;
-        await mysql.execute(query, [req.params.orderId]);
+        await execute(query, [req.params.orderId]);
 
         const response = {
             message: 'Pedido removido com sucesso',
@@ -125,14 +125,14 @@ exports.deleteOrder = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ error: error });
     }
-};
+}
 
-exports.oAuthGerencianet = async (req, res, next) => {
+export async function oAuthGerencianet(req, res, next) {
     try {
-        const cert = fs.readFileSync('prod282386.p12');
+        const cert = readFileSync('prod282386.p12');
         const credentials = process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET;
         const auth = Buffer.from(credentials).toString('base64');
-        const agent = https.Agent({
+        const agent = Agent({
             pfx: cert,
             passphrase: ''
         });
@@ -167,7 +167,7 @@ exports.oAuthGerencianet = async (req, res, next) => {
     }
 }
 
-exports.createPixBilling = async (req, res, next) => {
+export async function createPixBilling(req, res, next) {
     try {
         const data = JSON.stringify({
             "calendario": { "expiracao": 3600 },
@@ -208,7 +208,7 @@ exports.createPixBilling = async (req, res, next) => {
     }
 }
 
-exports.getQrCode = async (req, res, next) => {
+export async function getQrCode(req, res, next) {
     try {
         const locId = res.locals.billing.loc.id;
         const config = {
@@ -224,7 +224,7 @@ exports.getQrCode = async (req, res, next) => {
         axios(config)
             .then(response => {
                 imgQrCode = decodeBase64Image(response.data.imagemQrcode);
-                fs.writeFileSync(`qrcodes/pix-billing-${locId}.jpg`, imgQrCode.data)
+                writeFileSync(`qrcodes/pix-billing-${locId}.jpg`, imgQrCode.data)
                 console.log('QrCode', response.data);
                 next();
             })

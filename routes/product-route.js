@@ -1,11 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const multer = require('multer');
-const login = require('../middleware/login');
+import { Router } from 'express';
+const router = Router();
+import multer, { diskStorage } from 'multer';
+import { required } from '../middleware/login';
 
-const ProductsController = require('../controllers/product-controller');
+import { getProducts, postProduct, getProductDetail, updateProduct, deleteProduct, postImage, getImages } from '../controllers/product-controller';
 
-const storage = multer.diskStorage({
+const storage = diskStorage({
     destination: function (req, file, cb) {
         cb(null, './uploads/');
     },
@@ -30,28 +30,28 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-router.get('/', ProductsController.getProducts);
+router.get('/', getProducts);
 
 router.post(
     '/',
-    login.required,
+    required,
     upload.single('image'),
-    ProductsController.postProduct
+    postProduct
 );
-router.get('/:productId', ProductsController.getProductDetail);
-router.patch('/:productId', login.required, ProductsController.updateProduct);
-router.delete('/:productId', login.required, ProductsController.deleteProduct);
+router.get('/:productId', getProductDetail);
+router.patch('/:productId', required, updateProduct);
+router.delete('/:productId', required, deleteProduct);
 
 // imagens
 router.post(
     '/:productId/image',
-    login.required,
+    required,
     upload.single('image'),
-    ProductsController.postImage
+    postImage
 )
 router.get(
     '/:productId/images',
-    ProductsController.getImages
+    getImages
 )
 
-module.exports = router;
+export default router;

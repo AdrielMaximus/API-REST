@@ -1,18 +1,18 @@
-const express = require('express');
+import express from 'express';
 const app = express();
-const morgan = require('morgan');
-const bodyParser = require('body-parser');
+import { static as serveStatic } from 'express';
+import morgan from 'morgan';
+import { urlencoded, json } from 'body-parser';
 
-const productRoute = require('./routes/product-route');
-const categoryRoute = require('./routes/category-route');
-const orderRoute = require('./routes/order-route');
-const userRoute = require('./routes/user-route');
-const imageRoute  = require('./routes/image-route');
+import productRoute from './routes/product-route';
+import categoryRoute from './routes/category-route';
+import orderRoute from './routes/order-route';
+import userRoute from './routes/user-route';
+import imageRoute from './routes/image-route';
 
-app.use(morgan('dev'));
-app.use('/uploads', express.static('uploads'));
-app.use(bodyParser.urlencoded({ extended: false }));  // apenas dados simples
-app.use(bodyParser.json()); // json de entrada no body
+app.use('/uploads', serveStatic('uploads'));
+app.use(urlencoded({ extended: false }));  // apenas dados simples
+app.use(json()); // json de entrada no body
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -49,4 +49,4 @@ app.use((error, req, res, next) => {
     });
 });
 
-module.exports = app;
+export default app;

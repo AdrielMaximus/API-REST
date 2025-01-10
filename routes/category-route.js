@@ -1,10 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const login = require('../middleware/login');
+import { Router } from 'express';
+const router = Router();
+import { required } from '../middleware/login';
 
-const CategoriesController = require('../controllers/category-controller');
+import { getCategories, postCategory } from '../controllers/category-controller';
 
-router.get('/', CategoriesController.getCategories);
-router.post('/', login.required, CategoriesController.postCategory);
+router.get('/', getCategories);
+router.post('/', required, postCategory);
 
-module.exports = router;
+export default router;
